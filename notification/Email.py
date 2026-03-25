@@ -19,6 +19,7 @@ class Email:
             preco = str(produto["preco"]).replace(".", ",")
             loja = produto["loja"]
             link = produto["link"]
+            print(link)
 
             html += f"""
                 <div style="margin-bottom:20px;border-bottom:1px solid #ccc;padding-bottom:10px">

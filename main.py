@@ -19,12 +19,12 @@ print(PASSWORD_APP)
 
 def main():
     lista_produtos = [
-        {"nome": "iPhone 15", "loja": "ML", "link": "#", "preco": 3000.00},
-        {"nome": "iPhone 17", "loja": "ML", "link": "#", "preco": 8000.00},
+        {"nome": "iPhone 15", "loja": "ML", "link": "https://quartarev.com.br", "preco": 3000.00},
+        {"nome": "iPhone 17", "loja": "ML", "link": "https://mrbrownie.com.br", "preco": 8000.00},
     ]
 
     email = Email(EMAIL, PASSWORD_APP, logging)
-    email.enviar_email(EMAIL, lista_produtos)
+    email.enviar_email("marcelo.dsampaio@al.infnet.edu.br", lista_produtos)
 
 
 if __name__ == "__main__":
