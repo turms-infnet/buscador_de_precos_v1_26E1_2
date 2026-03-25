@@ -13,7 +13,9 @@ logging.basicConfig(
 
 load_dotenv()
 EMAIL = os.getenv("EMAIL")
+print(EMAIL)
 PASSWORD_APP = os.getenv("PASSWORD_APP")
+print(PASSWORD_APP)
 
 def main():
     lista_produtos = [
@@ -22,7 +24,7 @@ def main():
     ]
 
     email = Email(EMAIL, PASSWORD_APP, logging)
-    email.enviar_email("tiago.silva@prof.infnet.edu.br", lista_produtos)
+    email.enviar_email(EMAIL, lista_produtos)
 
 
 if __name__ == "__main__":
