@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
+from extrator import ExtratorAmazon, ExtratorAmericanas, ExtratorMercadoLivre
 import logging
+# import sentry_sdk
 
-from notification import Email
+from notificacao import Email
 
 logging.basicConfig(
     filename="server.log",
@@ -11,19 +13,25 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s no arquivo %(filename)s e função %(funcName)s na linha %(lineno)d: %(message)s",
 )
 
+# sentry_sdk.init(
+#     dsn=os.getenv("SENTRY_DSN"),
+#     send_default_pii=os.getenv("SEND_DEFAULT_PII"),
+# )
+
 load_dotenv()
 EMAIL = os.getenv("EMAIL")
 PASSWORD_APP = os.getenv("PASSWORD_APP")
 
 def main():
-    lista_produtos = [
-        {"nome": "iPhone 15", "loja": "ML", "link": "#", "preco": 3000.00},
-        {"nome": "iPhone 17", "loja": "ML", "link": "#", "preco": 8000.00},
-    ]
+    extratorMl = ExtratorMercadoLivre("Macbook Air", logging)
+    produto = extratorMl.buscar_produto()
 
-    email = Email(EMAIL, PASSWORD_APP, logging)
-    email.enviar_email("tiago.silva@prof.infnet.edu.br", lista_produtos)
+    # extratorAm = ExtratorAmazon("Iphone 15", logging)
+    # produto = extratorAm.buscar_produto()
 
+    # extratorAm = ExtratorAmericanas("Iphone 15", logging)
+    # produto = extratorAm.buscar_produto()
+    print(produto)
 
 if __name__ == "__main__":
     main()
