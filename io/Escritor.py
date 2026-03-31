@@ -1,9 +1,10 @@
 import os
-from .IO import IO
-
+from IO import IO
+from csv import DictWriter
 class Escritor(IO):
-    def __init__(self, arquivo, separador=";"):
-        self.super(arquivo, separador)
+    def __init__(self, arquivo, separador=";", colunas=None):
+        super().__init__(arquivo, separador)
+        self.colunas = colunas
     
     def escrever_arquivo(self, resultados):
         exists = os.path.exists(self.arquivo)
@@ -11,6 +12,11 @@ class Escritor(IO):
             os.remove(self.arquivo)
 
         with open(self.arquivo, mode="w", encoding="utf-8", newline="") as _arquivo:
-            for item in resultados:
-                pass
-        
+            if self.colunas is None:
+                self.colunas = resultados[0].keys()
+
+            escritor = DictWriter(
+                _arquivo, fieldnames=self.colunas, delimiter=self.separador
+            )
+            escritor.writeheader()
+            escritor.writerows(resultados)

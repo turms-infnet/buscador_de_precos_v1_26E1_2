@@ -3,7 +3,7 @@ from csv import DictReader
 
 class Leitor(IO):
     def __init__(self, arquivo, separador=";"):
-        self.super(arquivo, separador)
+        super().__init__(arquivo, separador)
 
     def ler_arquivo(self):
         resultados = []
