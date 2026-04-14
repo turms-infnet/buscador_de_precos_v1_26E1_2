@@ -44,15 +44,19 @@ class ExtratorMercadoLivre(ExtratorBase):
             items = soup.find_all("div", class_="ui-search-result__wrapper")
 
             item = items[0]
-            preco = item.find("span", class_="andes-money-amount__fraction").text
-            preco = preco.replace(".", "")
+            try:
+                preco = item.find("span", class_="andes-money-amount__fraction").text
+                preco = preco.replace(".", "")
 
-            centavos = item.find("span", class_="andes-money-amount__cents").text
-            
-            if centavos:
-                preco = f"{preco}.{centavos}"
-            else:
-                preco = f"{preco}.00"
+                centavos = item.find("span", class_="andes-money-amount__cents").text
+                
+                if centavos:
+                    preco = f"{preco}.{centavos}"
+                else:
+                    preco = f"{preco}.00"
+            except Exception as e:
+                preco = "0.00"
+                self.logging.error(f"Erro na precificação: {e}")
 
             link = item.find("a", class_="poly-component__title")["href"]
 
@@ -60,11 +64,15 @@ class ExtratorMercadoLivre(ExtratorBase):
 
             return {
                 "id_produto": None,
-                "preco": preco,
+                "preco": preco if preco else "0.0",
                 "plataforma": "MERCADO_LIVRE",
                 "link": link,
             }
-            
-
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
+            return {
+                "id_produto": None,
+                "preco": "0.00",
+                "plataforma": "MERCADO_LIVRE",
+                "link": None,
+            }

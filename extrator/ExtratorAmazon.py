@@ -40,8 +40,12 @@ class ExtratorAmazon(ExtratorBase):
             items = soup.find_all("div", attrs={"role": role})
             
             item = items[0]
-            preco = item.find("span", class_="a-offscreen").text
-            preco = Money.removeSpaceChar(preco)
+            try:
+                preco = item.find("span", class_="a-offscreen").text
+                preco = Money.removeSpaceChar(preco)
+            except Exception as e:
+                preco = "0.00"
+                self.logging.error(f"Erro na precificação: {e}")
             link = f"{driver.current_url}{item.find('a', class_='a-link-normal')['href']}"
 
             driver.close()
@@ -49,9 +53,15 @@ class ExtratorAmazon(ExtratorBase):
             return {
                 "id_produto": None,
                 "preco": preco,
-                "plataforma": "AME",
+                "plataforma": "AM",
                 "link": link,
             }
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
+            return {
+                "id_produto": None,
+                "preco": "0.00",
+                "plataforma": "AM",
+                "link": None,
+            }
         
