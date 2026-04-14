@@ -17,7 +17,14 @@ class Email:
         for produto in lista_produtos:
             nome = produto["nome"]
             preco = str(produto["preco"]).replace(".", ",")
-            loja = produto["loja"]
+
+            if produto["plataforma"] == "MERCADO_LIVRE":
+                loja = "Mercado Livre"
+            elif produto["plataforma"] == "AM":
+                loja = "Amazon"
+            else:
+                loja = "Americanas"
+                
             link = produto["link"]
 
             html += f"""

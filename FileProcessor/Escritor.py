@@ -1,7 +1,8 @@
 import os
-from IO import IO
+from .FileProcessor import FileProcessor
 from csv import DictWriter
-class Escritor(IO):
+
+class Escritor(FileProcessor):
     def __init__(self, arquivo, separador=";", colunas=None):
         super().__init__(arquivo, separador)
         self.colunas = colunas

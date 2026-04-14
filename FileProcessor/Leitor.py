@@ -1,7 +1,7 @@
-from .IO import IO
+from .FileProcessor import FileProcessor
 from csv import DictReader
 
-class Leitor(IO):
+class Leitor(FileProcessor):
     def __init__(self, arquivo, separador=";"):
         super().__init__(arquivo, separador)
 

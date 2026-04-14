@@ -42,8 +42,13 @@ class ExtratorAmericanas(ExtratorBase):
             items = soup.find_all("div", class_=tag)
 
             item = items[0]
-            preco = item.find("p", class_="ProductCard_productPrice__XFEqu").text
-            preco = Money.removeSpaceChar(preco)
+            try:
+                preco = item.find("p", class_="ProductCard_productPrice__XFEqu").text
+                preco = Money.removeSpaceChar(preco)
+            except Exception as e:
+                preco = "0.00"
+                self.logging.error(f"Erro na precificação: {e}")
+                
             link = f"{driver.current_url}{item.find('a')['href']}"
 
             driver.close()
@@ -57,3 +62,9 @@ class ExtratorAmericanas(ExtratorBase):
 
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
+            return {
+                "id_produto": None,
+                "preco": "0.00",
+                "plataforma": "AME",
+                "link": None,
+            }
