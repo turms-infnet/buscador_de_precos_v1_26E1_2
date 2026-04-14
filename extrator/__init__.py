@@ -1,0 +1,3 @@
+from .ExtratorAmericanas import ExtratorAmericanas
+from .ExtratorAmazon import ExtratorAmazon
+from .ExtratorMercadoLivre import ExtratorMercadoLivre
