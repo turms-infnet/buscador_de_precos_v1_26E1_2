@@ -33,8 +33,6 @@ PASSWORD_APP = os.getenv("PASSWORD_APP")
 def main(conn):
     carteiro = Email(EMAIL, PASSWORD_APP, logging)
 
-    escritorProdutosEncontrados = Escritor("data/produtos_encontrados.csv")
-
     lista_clientes = select_clientes(conn, logging, True)
     lista_produtos = select_produtos(conn, logging, True)
 
