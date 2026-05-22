@@ -62,17 +62,7 @@ class ExtratorMercadoLivre(ExtratorBase):
 
             driver.close()
 
-            return {
-                "id_produto": None,
-                "preco": preco if preco else "0.0",
-                "plataforma": "MERCADO_LIVRE",
-                "link": link,
-            }
+            return [None, preco, "MERCADO_LIVRE", link]
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
-            return {
-                "id_produto": None,
-                "preco": "0.00",
-                "plataforma": "MERCADO_LIVRE",
-                "link": None,
-            }
+            return [None, "0.00", "MERCADO_LIVRE", None]

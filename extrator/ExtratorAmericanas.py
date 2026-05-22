@@ -53,18 +53,8 @@ class ExtratorAmericanas(ExtratorBase):
 
             driver.close()
 
-            return {
-                "id_produto": None,
-                "preco": preco,
-                "plataforma": "AME",
-                "link": link,
-            }
+            return [None, preco, "AME", link]
 
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
-            return {
-                "id_produto": None,
-                "preco": "0.00",
-                "plataforma": "AME",
-                "link": None,
-            }
+            return [None, "0.00", "AME", None]

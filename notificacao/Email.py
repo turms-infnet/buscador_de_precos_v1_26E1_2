@@ -15,17 +15,17 @@ class Email:
         html = "<h2>Seu Alerta de Preços Chegou! 🚀</h2>"
 
         for produto in lista_produtos:
-            nome = produto["nome"]
-            preco = str(produto["preco"]).replace(".", ",")
+            nome = produto[4]
+            preco = str(produto[1]).replace(".", ",")
 
-            if produto["plataforma"] == "MERCADO_LIVRE":
+            if produto[2] == "MERCADO_LIVRE":
                 loja = "Mercado Livre"
-            elif produto["plataforma"] == "AM":
+            elif produto[2] == "AM":
                 loja = "Amazon"
             else:
                 loja = "Americanas"
                 
-            link = produto["link"]
+            link = produto[3]
 
             html += f"""
                 <div style="margin-bottom:20px;border-bottom:1px solid #ccc;padding-bottom:10px">

@@ -50,18 +50,9 @@ class ExtratorAmazon(ExtratorBase):
 
             driver.close()
 
-            return {
-                "id_produto": None,
-                "preco": preco,
-                "plataforma": "AM",
-                "link": link,
-            }
+            return [None, preco, "AM", link]
+        
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
-            return {
-                "id_produto": None,
-                "preco": "0.00",
-                "plataforma": "AM",
-                "link": None,
-            }
+            return [None, "0.00", "AM", None]
         

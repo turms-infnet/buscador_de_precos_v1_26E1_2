@@ -1,8 +1,14 @@
 import sqlite3
 
-conn = sqlite3.connect("meu_banco.db")
+def open_connection():
+    try:
+        conn = sqlite3.connect("meu_banco.db")
+        return conn
+    except Exception as e:
+        print("[open_connection] >> Erro ao abrir conexão com o banco de dados", e)
+        return None
 
-def create_table():
+def create_table(conn):
     query = """
             CREATE TABLE IF NOT EXISTS produto (
                 ID_PRODUTO INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,13 +33,13 @@ def create_table():
                 PLATAFORMA TEXT,
                 LINK TEXT,
                 XID_PRODUTO INTEGER,
+                STATUS INTEGER DEFAULT 1,
                 FOREIGN KEY (XID_PRODUTO) REFERENCES produto(ID_PRODUTO)
             );
     """
     conn.executescript(query)
     
-
-def populate_clientes():
+def populate_clientes(conn):
     try:
         cursor = conn.cursor()
 
@@ -47,8 +53,10 @@ def populate_clientes():
     except Exception as e:
         print("[populate_clientes] >> Erro ao inserir clientes", e)
         conn.rollback()
+    finally:
+        cursor.close()
     
-def populate_produtos():
+def populate_produtos(conn):
     try:
         cursor = conn.cursor()
 
@@ -65,8 +73,10 @@ def populate_produtos():
     except Exception as e:
         print("[populate_produtos] >> Erro ao inserir produtos", e)
         conn.rollback()
+    finally:
+        cursor.close()
 
-def populate_clientes_produtos():
+def populate_clientes_produtos(conn):
     try:
         cursor = conn.cursor()
 
@@ -97,10 +107,70 @@ def populate_clientes_produtos():
         conn.commit()
     except:
         conn.rollback()
+    finally:
+        cursor.close()
 
+def salvar_precos_encontrados(conn, data, logging):
+    try:
+        cursor = conn.cursor()
+
+        cursor.executemany("INSERT INTO preco (PLATAFORMA, LINK, XID_PRODUTO, STATUS) VALUES (?, ?, ?, ?)", data)
+        conn.commit()
+    except:
+        conn.rollback()
+    finally:
+        cursor.close()
+
+def select_cliente_produtos(conn, id, logging, isDict=False):
+    try:
+        if isDict:
+            conn.row_factory = sqlite3.Row
+        else:
+            conn.row_factory = None
+
+        rows = conn.execute("SELECT XID_PRODUTO FROM cliente_produto WHERE XID_CLIENTE = ?;", [id])
+        list_ids = rows.fetchall()
+
+        ids = []
+        for _id in list_ids:
+            ids.append(_id[0])
+
+        return ids
+    
+    except Exception as e:
+        logging.error(e)
+        return None
+
+def select_clientes(conn, logging, isDict=False):
+    try:
+        if isDict:
+            conn.row_factory = sqlite3.Row
+        else:
+            conn.row_factory = None
+
+        rows = conn.execute("SELECT * FROM cliente;")
+        return rows.fetchall()
+    except Exception as e:
+        logging.error(e)
+        return None
+
+def select_produtos(conn, logging, isDict=False):
+    try:
+        if isDict:
+            conn.row_factory = sqlite3.Row
+        else:
+            conn.row_factory = None
+
+        rows = conn.execute("SELECT * FROM produto;")
+        return rows.fetchall()
+    except Exception as e:
+        logging.error(e)
+        return None
+    
 if __name__ == "__main__":
-    create_table()
-    # populate_clientes()
-    # populate_produtos()
-    # populate_clientes_produtos()
+    conn = open_connection()
+    create_table(conn)
+    # populate_clientes(conn)
+    # populate_produtos(conn)
+    # populate_clientes_produtos(conn)
     conn.close()
