@@ -30,6 +30,7 @@ def create_table(conn):
 
             CREATE TABLE IF NOT EXISTS preco (
                 ID_PRECO INTEGER PRIMARY KEY AUTOINCREMENT,
+                PRECO REAL,
                 PLATAFORMA TEXT,
                 LINK TEXT,
                 XID_PRODUTO INTEGER,
@@ -114,9 +115,29 @@ def salvar_precos_encontrados(conn, data, logging):
     try:
         cursor = conn.cursor()
 
-        cursor.executemany("INSERT INTO preco (PLATAFORMA, LINK, XID_PRODUTO, STATUS) VALUES (?, ?, ?, ?)", data)
+        ndata = [sublista[:-1] for sublista in data]
+        desativar_produtos_velhos(conn, ndata, logging)
+        cursor.executemany("INSERT INTO preco (XID_PRODUTO, PRECO, PLATAFORMA, LINK) VALUES (?, ?, ?, ?)", ndata)
         conn.commit()
-    except:
+    except Exception as e:
+        logging.error(e)
+        conn.rollback()
+    finally:
+        cursor.close()
+
+def desativar_produtos_velhos(conn, lista_produtos, logging):
+    try:
+        cursor = conn.cursor()
+
+        for produto in lista_produtos:
+            try:
+                cursor.execute("UPDATE preco SET STATUS = 0 WHERE XID_PRODUTO = ? AND STATUS = 1", (produto[0],))
+                conn.commit()
+            except Exception as e:
+                logging.error(e)
+                conn.rollback()
+    except Exception as e:
+        logging.error(e)
         conn.rollback()
     finally:
         cursor.close()

@@ -10,7 +10,7 @@ from database.connection import (
     select_cliente_produtos, 
     salvar_precos_encontrados
 )
-# import sentry_sdk
+from selenium.webdriver.common.by import By
 
 from notificacao import Email
 
@@ -20,11 +20,6 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s no arquivo %(filename)s e função %(funcName)s na linha %(lineno)d: %(message)s",
 )
-
-# sentry_sdk.init(
-#     dsn=os.getenv("SENTRY_DSN"),
-#     send_default_pii=os.getenv("SEND_DEFAULT_PII"),
-# )
 
 load_dotenv()
 EMAIL = os.getenv("EMAIL")
@@ -40,30 +35,43 @@ def main(conn):
 
     for produto in lista_produtos:
         nome = produto["nome"]
-        extratorMl = ExtratorMercadoLivre(nome, logging)
+        extratorMl = ExtratorMercadoLivre(nome, logging, {
+            "select": {
+                "type": By.CSS_SELECTOR,
+                "name": "button[class='andes-dropdown__trigger']"
+            },
+            "option": {
+                "type": By.CSS_SELECTOR,
+                "name": "li.andes-list__item.andes-list__item--size-medium:nth-of-type(2)"
+            },
+            "item": "ui-search-result__wrapper",
+            "price": "andes-money-amount__fraction",
+            "link": "poly-component__title"
+        })
         produtoMl = extratorMl.buscar_produto()
 
-        extratorAm = ExtratorAmazon(nome, logging)
-        produtoAm = extratorAm.buscar_produto()
+        # extratorAm = ExtratorAmazon(nome, logging)
+        # produtoAm = extratorAm.buscar_produto()
 
-        extratorAme = ExtratorAmericanas(nome, logging)
-        produtoAme = extratorAme.buscar_produto()
+        # extratorAme = ExtratorAmericanas(nome, logging)
+        # produtoAme = extratorAme.buscar_produto()
 
         precoMl = produtoMl[1]
-        precoAm = produtoAm[1]
-        precoAme = produtoAme[1]
+        # precoAm = produtoAm[1]
+        # precoAme = produtoAme[1]
 
-        if precoMl < precoAm and precoMl < precoAme and precoMl != "0.00":
-            lista_produtos_atualizados.append(produtoMl)
-        elif precoAm < precoMl and precoAm < precoAme and precoAm != "0.00":
-            lista_produtos_atualizados.append(produtoAm)
-        elif precoAme !="0.00" :
-            lista_produtos_atualizados.append(produtoAme)
+        lista_produtos_atualizados.append(produtoMl)
+        # if precoMl < precoAm and precoMl < precoAme and precoMl != "0.00":
+        #     lista_produtos_atualizados.append(produtoMl)
+        # elif precoAm < precoMl and precoAm < precoAme and precoAm != "0.00":
+        #     lista_produtos_atualizados.append(produtoAm)
+        # elif precoAme !="0.00" :
+        #     lista_produtos_atualizados.append(produtoAme)
 
         lista_produtos_atualizados[-1][0] = produto["id_produto"]
         lista_produtos_atualizados[-1].append(nome)
     
-    salvar_precos_encontrados(lista_produtos_atualizados)
+    salvar_precos_encontrados(conn, lista_produtos_atualizados, logging)
 
     for cliente in lista_clientes:
         email = cliente["email"]

@@ -7,8 +7,8 @@ import time
 from utils import Money
 
 class ExtratorAmazon(ExtratorBase):
-    def __init__(self, nome_produto, logging):
-        super().__init__(nome_produto, "https://www.amazon.com.br", logging)
+    def __init__(self, nome_produto, logging, headless=False):
+        super().__init__(nome_produto, "https://www.amazon.com.br", logging, headless)
 
     def buscar_url(self, url_final, wait):
         _driver = super().buscar_url(url_final, wait)

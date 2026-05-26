@@ -42,7 +42,6 @@ class Email:
     def enviar_email(self, cliente_email, lista_produtos=[]):
         data_atual = datetime.now()
         data_formatada = data_atual.strftime("%d/%m/%Y")
-        print(data_atual)
 
         mensagem = MIMEMultipart()
         mensagem["From"] = self.__email
