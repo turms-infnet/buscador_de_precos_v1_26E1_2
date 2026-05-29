@@ -1,4 +1,4 @@
-from config.conn import DeclarativeBase, Table, Column, ForeignKey
+from database.ormconnection import DeclarativeBase, Table, Column, ForeignKey
 
 class Base(DeclarativeBase):
     __abstract__ = True

@@ -2,7 +2,7 @@ from typing import List
 from datetime import datetime
 
 from .Base import Base, cliente_produto
-from config.conn import mapped_column, String, relationship, Mapped, Float, DateTime, func
+from database.ormconnection import mapped_column, String, relationship, Mapped, Float, DateTime, func
 
 class Cliente(Base):
     __tablename__ = "cliente"
@@ -15,3 +15,6 @@ class Cliente(Base):
     produtos: Mapped[List["Produto"]] = relationship(
         secondary=cliente_produto, back_populates="clientes"
     )
+
+    def __repr__(self):
+        return f"<Cliente: {self.nome} - {self.id}>"

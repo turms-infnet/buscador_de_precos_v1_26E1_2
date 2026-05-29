@@ -3,8 +3,7 @@ from dotenv import load_dotenv
 from extrator import ExtratorAmazon, ExtratorAmericanas, ExtratorMercadoLivre
 import logging
 from FileProcessor import Leitor, Escritor
-from database.connection import (
-    open_connection, 
+from create_db import (
     select_clientes, 
     select_produtos, 
     select_cliente_produtos, 
@@ -25,16 +24,16 @@ load_dotenv()
 EMAIL = os.getenv("EMAIL")
 PASSWORD_APP = os.getenv("PASSWORD_APP")
 
-def main(conn):
+def main():
     carteiro = Email(EMAIL, PASSWORD_APP, logging)
 
-    lista_clientes = select_clientes(conn, logging, True)
-    lista_produtos = select_produtos(conn, logging, True)
+    lista_clientes = select_clientes(logging)
+    lista_produtos = select_produtos(logging)
 
     lista_produtos_atualizados = []
 
     for produto in lista_produtos:
-        nome = produto["nome"]
+        nome = produto.nome
         extratorMl = ExtratorMercadoLivre(nome, logging, {
             "select": {
                 "type": By.CSS_SELECTOR,
@@ -55,36 +54,30 @@ def main(conn):
 
         # extratorAme = ExtratorAmericanas(nome, logging)
         # produtoAme = extratorAme.buscar_produto()
+        # 
 
-        precoMl = produtoMl[1]
-        # precoAm = produtoAm[1]
-        # precoAme = produtoAme[1]
-
+        produtoMl.id = produto.id
         lista_produtos_atualizados.append(produtoMl)
+
+        # precoMl = produtoMl.preco                                 
+        # precoAm = produtoAm.preco
+        # precoAme = produtoAme.preco)
         # if precoMl < precoAm and precoMl < precoAme and precoMl != "0.00":
+        #     produtoMl.id = produto.id
         #     lista_produtos_atualizados.append(produtoMl)
         # elif precoAm < precoMl and precoAm < precoAme and precoAm != "0.00":
+        #     produtoAm.id = produto.id
         #     lista_produtos_atualizados.append(produtoAm)
         # elif precoAme !="0.00" :
+        #     produtoAme.id = produto.id
         #     lista_produtos_atualizados.append(produtoAme)
-
-        lista_produtos_atualizados[-1][0] = produto["id_produto"]
-        lista_produtos_atualizados[-1].append(nome)
     
-    salvar_precos_encontrados(conn, lista_produtos_atualizados, logging)
+    salvar_precos_encontrados(lista_produtos_atualizados, logging)
 
+    # lista_clientes = select_clientes(logging)
     for cliente in lista_clientes:
-        email = cliente["email"]
-        ids_produtos = select_cliente_produtos(conn, cliente["id_cliente"], logging, False)
-        oferta_cliente = []
-        for produto in lista_produtos_atualizados:
-            if produto[0] in ids_produtos:
-                oferta_cliente.append(produto)
-        
-        carteiro.enviar_email(email, oferta_cliente)
+        carteiro.enviar_email(cliente.email, cliente.produtos[0])
 
 
 if __name__ == "__main__":
-    conn = open_connection()
-    main(conn)
-    conn.close()
+    main()

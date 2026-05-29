@@ -1,6 +1,8 @@
 from datetime import datetime
+from typing import List
+
 from .Base import Base, cliente_produto
-from config.conn import mapped_column, String, ForeignKey, Mapped, Float, DateTime, func
+from database.ormconnection import mapped_column, String, ForeignKey, Mapped, Float, DateTime, func, relationship
 
 class Preco(Base):
     __tablename__ = "preco"
@@ -13,4 +15,6 @@ class Preco(Base):
     status: Mapped[int] = mapped_column(default=1, name="STATUS")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), name="CREATED_AT")
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), name="UPDATED_AT")
-    
+    produto: Mapped[List["Produto"]] = relationship(
+        back_populates="precos"
+    )

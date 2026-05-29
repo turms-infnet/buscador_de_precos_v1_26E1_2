@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, String, Table, Column, ForeignKey, Float, DateTime, func
+from sqlalchemy import create_engine, String, Table, Column, ForeignKey, Float, DateTime, func, select
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapper, mapped_column, relationship, Mapped
 
 def get_engine():
