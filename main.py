@@ -6,7 +6,6 @@ from FileProcessor import Leitor, Escritor
 from create_db import (
     select_clientes, 
     select_produtos, 
-    select_cliente_produtos, 
     salvar_precos_encontrados
 )
 from selenium.webdriver.common.by import By
@@ -47,36 +46,35 @@ def main():
             "price": "andes-money-amount__fraction",
             "link": "poly-component__title"
         })
-        produtoMl = extratorMl.buscar_produto()
+        precoMl = extratorMl.buscar_produto()
 
         # extratorAm = ExtratorAmazon(nome, logging)
-        # produtoAm = extratorAm.buscar_produto()
+        # precoAm = extratorAm.buscar_produto()
 
-        # extratorAme = ExtratorAmericanas(nome, logging)
-        # produtoAme = extratorAme.buscar_produto()
-        # 
+        # extratorAme = ExtratorAmericanas(nome, logging, {})
+        # precoAme = extratorAme.buscar_produto()
 
-        produtoMl.id = produto.id
-        lista_produtos_atualizados.append(produtoMl)
+        precoMl.id_produto = produto.id
+        lista_produtos_atualizados.append(precoMl)
 
-        # precoMl = produtoMl.preco                                 
-        # precoAm = produtoAm.preco
-        # precoAme = produtoAme.preco)
+        # precoMl = precoMl.preco                                 
+        # precoAm = precoAm.preco
+        # precoAme = precoAme.preco)
         # if precoMl < precoAm and precoMl < precoAme and precoMl != "0.00":
-        #     produtoMl.id = produto.id
-        #     lista_produtos_atualizados.append(produtoMl)
+        #     precoMl.id = produto.id
+        #     lista_produtos_atualizados.append(precoMl)
         # elif precoAm < precoMl and precoAm < precoAme and precoAm != "0.00":
-        #     produtoAm.id = produto.id
-        #     lista_produtos_atualizados.append(produtoAm)
+        #     precoAm.id = produto.id
+        #     lista_produtos_atualizados.append(precoAm)
         # elif precoAme !="0.00" :
-        #     produtoAme.id = produto.id
-        #     lista_produtos_atualizados.append(produtoAme)
+        #     precoAme.id = produto.id
+        #     lista_produtos_atualizados.append(precoAme)
     
     salvar_precos_encontrados(lista_produtos_atualizados, logging)
 
-    # lista_clientes = select_clientes(logging)
+    lista_clientes = select_clientes(logging, getProdutos=True, getPrecos=True)
     for cliente in lista_clientes:
-        carteiro.enviar_email(cliente.email, cliente.produtos[0])
+        carteiro.enviar_email(cliente.email, cliente.produtos)
 
 
 if __name__ == "__main__":

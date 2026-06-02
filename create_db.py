@@ -1,4 +1,4 @@
-from database.ormconnection import get_engine, get_session, select, update
+from database.ormconnection import get_engine, get_session, select, update, selectinload, with_loader_criteria
 from model.Base import Base, cliente_produto
 from model.Produto import Produto
 from model.Cliente import Cliente
@@ -81,7 +81,7 @@ def populate_clientes_produtos():
 def salvar_precos_encontrados(precos, logging):
     session = get_session()
     try:
-        stmt = (update(Preco).where(Preco.status == 1).value(status=0))
+        stmt = (update(Preco).where(Preco.status == 1).values(status=0))
         session.execute(stmt)
         session.add_all(precos)
         session.commit()
@@ -91,10 +91,25 @@ def salvar_precos_encontrados(precos, logging):
     finally:
         session.close()
 
-def select_clientes(logging):
+def select_clientes(logging, getProdutos=False, getPrecos=False):
     session = get_session()
     try:
-        return session.scalars(select(Cliente)).all()
+        stmt = select(Cliente)
+
+        if getProdutos and getPrecos:
+            stmt = stmt.options(
+                selectinload(Cliente.produtos).selectinload(Produto.precos),
+                with_loader_criteria(Preco, Preco.status == 1)
+            )
+        elif getProdutos:
+            stmt = stmt.options(selectinload(Cliente.produtos))
+        elif getPrecos:
+            stmt = stmt.options(
+                selectinload(Cliente.precos),
+                with_loader_criteria(Preco, Preco.status == 1)
+            )
+
+        return session.scalars(stmt).all()
     except Exception as e:
         logging.error(e)
         return None

@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine, String, Table, Column, ForeignKey, Float, DateTime, func, select
-from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapper, mapped_column, relationship, Mapped
+from sqlalchemy import create_engine, String, Table, Column, ForeignKey, Float, DateTime, func, select, update
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapper, mapped_column, relationship, Mapped, selectinload, with_loader_criteria
 
 def get_engine():
     engine = create_engine('sqlite:///banco-orm.db')
