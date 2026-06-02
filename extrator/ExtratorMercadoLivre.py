@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.common.by import By
 import time
 
+from model.Preco import Preco
+
 class ExtratorMercadoLivre(ExtratorBase):
     def __init__(self, nome_produto, logging, seletors, headless=False):
         super().__init__(nome_produto, "https://lista.mercadolivre.com.br", logging, headless)
@@ -54,7 +56,12 @@ class ExtratorMercadoLivre(ExtratorBase):
 
             driver.close()
 
-            return [None, preco, "MERCADO_LIVRE", link]
+            return Preco(
+                preco=preco,
+                plataforma="MERCADO_LIVRE",
+                link=link,
+                id_produto=None
+            )
         except Exception as e:
             self.logging.error(f"Erro ao buscar produto: {e}")
             return [None, "0.00", "MERCADO_LIVRE", None]
